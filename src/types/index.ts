@@ -5,6 +5,7 @@ export type UserRole = "Admin" | "Project Manager" | "Site Engineer" | "Viewer";
 export interface User {
   id: number;
   name: string;
+  full_name?: string; // Added to match UI usage
   email: string | null;
   role: UserRole;
   phone?: string | null;
@@ -59,7 +60,7 @@ export interface ProjectDashboardStats {
 }
 
 export type TaskPriority = "Low" | "Medium" | "High" | "Critical";
-export type TaskStatus = "Not Started" | "In Progress" | "Blocked" | "Done";
+export type TaskStatus = "Not Started" | "In Progress" | "Blocked" | "Done" | "Delayed"; // Added Delayed
 
 export interface Task {
   id: number;
@@ -67,7 +68,7 @@ export interface Task {
   parent_task_id?: number;
   title: string;
   description?: string;
-  assignee_id?: number;
+  assignee_id?: number | null; // Allow null to match API usage
   start_date: string;
   due_date: string;
   priority: TaskPriority;
@@ -86,6 +87,18 @@ export interface DashboardOverview {
   total_budget_committed: number;
   total_actual_spent: number;
   upcoming_deadlines: { id: number; title: string; due_date: string; project_id: number }[];
+  // Added missing properties from build errors
+  recent_activity?: any[];
+  on_track_projects_count?: number;
+  at_risk_projects_count?: number;
+  on_track_percentage?: number;
+  completed_milestones_count?: number;
+  total_milestones_count?: number;
+  key_milestones?: any[];
+  pending_approvals_count?: number;
+  in_progress_tasks_count?: number;
+  delayed_tasks_count?: number;
+  completed_tasks_count?: number;
 }
 
 export interface NotificationItem {
