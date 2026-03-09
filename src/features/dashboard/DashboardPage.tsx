@@ -16,12 +16,14 @@ const STAT_CARDS = [
     label: "Active Projects",
     icon: "🏗️",
     tone: "accent",
+    currency: false,
   },
   {
     key: "overdue_tasks_count",
     label: "Overdue Tasks",
     icon: "⏱️",
     tone: "error",
+    currency: false,
   },
   {
     key: "total_budget_committed",
@@ -116,18 +118,18 @@ export function DashboardPage() {
             card.tone === "success"
               ? "text-status-success"
               : card.tone === "error"
-              ? "text-status-error"
-              : card.tone === "warning"
-              ? "text-status-warning"
-              : "text-accent-secondary";
+                ? "text-status-error"
+                : card.tone === "warning"
+                  ? "text-status-warning"
+                  : "text-accent-secondary";
           const iconBgClass =
             card.tone === "success"
               ? "bg-status-success/10 text-status-success"
               : card.tone === "error"
-              ? "bg-status-error/10 text-status-error"
-              : card.tone === "warning"
-              ? "bg-status-warning/10 text-status-warning"
-              : "bg-accent-secondary/10 text-accent-secondary";
+                ? "bg-status-error/10 text-status-error"
+                : card.tone === "warning"
+                  ? "bg-status-warning/10 text-status-warning"
+                  : "bg-accent-secondary/10 text-accent-secondary";
 
           return (
             <article
@@ -203,12 +205,11 @@ export function DashboardPage() {
                   <div
                     className="h-full rounded-full bg-status-success"
                     style={{
-                      width: `${
-                        Math.min(
-                          100,
-                          Number(data?.on_track_percentage ?? 0)
-                        ) || 0
-                      }%`,
+                      width: `${Math.min(
+                        100,
+                        Number(data?.on_track_percentage ?? 0)
+                      ) || 0
+                        }%`,
                     }}
                   />
                 </div>
@@ -239,8 +240,8 @@ export function DashboardPage() {
                     const color = overdue
                       ? "bg-status-error"
                       : m.completed
-                      ? "bg-status-success"
-                      : "bg-status-warning";
+                        ? "bg-status-success"
+                        : "bg-status-warning";
                     return (
                       <div key={m.id} className="space-y-1">
                         <div className="flex items-center justify-between text-[11px]">
@@ -310,9 +311,8 @@ export function DashboardPage() {
                         </Link>
                       </div>
                       <span
-                        className={`ml-3 whitespace-nowrap text-[11px] ${
-                          overdue ? "text-status-error" : "text-text-secondary"
-                        }`}
+                        className={`ml-3 whitespace-nowrap text-[11px] ${overdue ? "text-status-error" : "text-text-secondary"
+                          }`}
                       >
                         {format(parseISO(d.due_date), "dd MMM")}
                       </span>
@@ -348,10 +348,10 @@ export function DashboardPage() {
                     status === "completed"
                       ? "bg-status-success/15 text-status-success"
                       : status === "active"
-                      ? "bg-status-warning/15 text-status-warning"
-                      : status === "on hold"
-                      ? "bg-status-error/15 text-status-error"
-                      : "bg-accent-secondary/15 text-accent-secondary";
+                        ? "bg-status-warning/15 text-status-warning"
+                        : status === "on hold"
+                          ? "bg-status-error/15 text-status-error"
+                          : "bg-accent-secondary/15 text-accent-secondary";
 
                   return (
                     <Link
@@ -463,8 +463,8 @@ export function DashboardPage() {
                       <p className="mt-0.5 text-[11px] text-text-muted">
                         {item.project_name
                           ? `${item.project_name} · ${formatDate(
-                              item.created_at
-                            )}`
+                            item.created_at
+                          )}`
                           : formatDate(item.created_at)}
                       </p>
                     </div>
@@ -472,8 +472,8 @@ export function DashboardPage() {
                       {item.type === "delay"
                         ? "Delay"
                         : item.type === "approval"
-                        ? "Approval"
-                        : "Update"}
+                          ? "Approval"
+                          : "Update"}
                     </span>
                   </li>
                 ))}

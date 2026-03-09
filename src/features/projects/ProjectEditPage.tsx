@@ -57,13 +57,13 @@ export function ProjectEditPage() {
         .update(Number(projectId), {
           name: data.name,
           description: data.description,
-          status: data.status,
+          status: data.status as any,
           start_date: data.start_date,
           end_date: data.end_date,
           estimated_budget: data.estimated_budget,
           sqft: data.sqft,
-          project_type: data.project_type,
-          project_category: data.project_category,
+          project_type: data.project_type as any,
+          project_category: data.project_category as any,
         })
         .then((r) => r.data),
     onSuccess: () => {

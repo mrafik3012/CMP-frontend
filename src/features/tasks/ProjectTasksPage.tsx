@@ -97,10 +97,15 @@ export function ProjectTasksPage() {
   const saveMutation = useMutation({
     mutationFn: (payload: SaveTaskPayload) => {
       const { editingTaskId, ...formData } = payload;
-      const data = { ...formData, assignee_id: formData.assignee_id ? Number(formData.assignee_id) : null };
+      const data = {
+        ...formData,
+        assignee_id: formData.assignee_id ? Number(formData.assignee_id) : null,
+        priority: formData.priority as any,
+        status: formData.status as any,
+      };
       return editingTaskId != null
-        ? tasksApi.update(editingTaskId, data).then((r) => r.data)
-        : tasksApi.create(pid, data).then((r) => r.data);
+        ? tasksApi.update(editingTaskId, data as any).then((r) => r.data)
+        : tasksApi.create(pid, data as any).then((r) => r.data);
     },
     onSuccess: (_data, variables) => {
       qc.invalidateQueries({ queryKey: ["tasks", pid] });
@@ -144,7 +149,7 @@ export function ProjectTasksPage() {
       end: t.due_date.slice(0, 10),
       progress: t.status === "Completed" ? 100
         : t.status === "In Progress" ? 50
-        : t.status === "On Hold" ? 25 : 0,
+          : t.status === "On Hold" ? 25 : 0,
       dependencies: "",
     }));
 
@@ -187,21 +192,19 @@ export function ProjectTasksPage() {
           <div className="flex overflow-hidden rounded border border-border-default text-sm">
             <button
               onClick={() => setView("list")}
-              className={`px-3 py-1.5 ${
-                view === "list"
+              className={`px-3 py-1.5 ${view === "list"
                   ? "bg-accent-primary text-text-inverse"
                   : "text-text-secondary hover:bg-surface-hover"
-              }`}
+                }`}
             >
               ☰ List
             </button>
             <button
               onClick={() => setView("gantt")}
-              className={`px-3 py-1.5 ${
-                view === "gantt"
+              className={`px-3 py-1.5 ${view === "gantt"
                   ? "bg-accent-primary text-text-inverse"
                   : "text-text-secondary hover:bg-surface-hover"
-              }`}
+                }`}
             >
               📊 Gantt
             </button>
@@ -241,11 +244,10 @@ export function ProjectTasksPage() {
           <div className="mb-4 flex gap-2">
             {(["Day", "Week", "Month"] as const).map(m => (
               <button key={m} onClick={() => setGanttMode(m)}
-                className={`rounded px-3 py-1 text-xs font-medium border ${
-                  ganttMode === m
+                className={`rounded px-3 py-1 text-xs font-medium border ${ganttMode === m
                     ? "border-accent-primary bg-accent-primary text-text-inverse"
                     : "border-border-default text-text-secondary hover:bg-surface-hover"
-                }`}>
+                  }`}>
                 {m}
               </button>
             ))}
@@ -287,9 +289,8 @@ export function ProjectTasksPage() {
                 <tbody>
                   {filteredTasks.map((t: any) => (
                     <tr key={t.id}
-                      className={`border-t border-border-subtle hover:bg-surface-hover ${
-                        isOverdue(t) ? "bg-status-error/5" : ""
-                      }`}>
+                      className={`border-t border-border-subtle hover:bg-surface-hover ${isOverdue(t) ? "bg-status-error/5" : ""
+                        }`}>
                       <td className="px-4 py-3">
                         <div className="font-medium text-text-primary">{t.title}</div>
                         {t.description && (
@@ -359,106 +360,106 @@ export function ProjectTasksPage() {
                 setEditingTask(null);
                 reset();
               },
-              () => {}
+              () => { }
             );
           })}
           className="space-y-4"
         >
-              <div>
-                <label className={LABEL}>Title *</label>
-                <input {...register("title", { required: "Title is required" })}
-                  className={INPUT} placeholder="Task title" />
-                {errors.title && (
-                  <p className="mt-1 text-xs text-status-error">
-                    {errors.title.message}
-                  </p>
-                )}
-              </div>
-              <div>
-                <label className={LABEL}>Description</label>
-                <textarea {...register("description")} rows={2} className={INPUT} placeholder="Optional description" />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className={LABEL}>Priority</label>
-                  <select {...register("priority")} className={INPUT}>
-                    {PRIORITIES.map(p => <option key={p}>{p}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className={LABEL}>Status</label>
-                  <select {...register("status")} className={INPUT}>
-                    {STATUSES.map(s => <option key={s}>{s}</option>)}
-                  </select>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className={LABEL}>Start Date *</label>
-                  <input
-                    type="date"
-                    {...register("start_date", { required: "Start date is required" })}
-                    className={INPUT}
-                  />
-                  {errors.start_date && (
-                    <p className="mt-1 text-xs text-status-error">
-                      {errors.start_date.message}
-                    </p>
-                  )}
-                </div>
-                <div>
-                  <label className={LABEL}>Due Date *</label>
-                  <input
-                    type="date"
-                    {...register("due_date", {
-                      required: "Due date is required",
-                      validate: (v) =>
-                        !startDate || !v || v >= startDate || "Due date must be on or after start date",
-                    })}
-                    className={INPUT}
-                    min={startDate}
-                  />
-                  {errors.due_date && (
-                    <p className="mt-1 text-xs text-status-error">
-                      {errors.due_date.message}
-                    </p>
-                  )}
-                </div>
-              </div>
-              <div>
-                <label className={LABEL}>Assignee</label>
-                <select {...register("assignee_id")} className={INPUT}>
-                  <option value="">— Unassigned —</option>
-                  {users?.map((u: any) => (
-                    <option key={u.id} value={u.id}>{u.full_name ?? u.email}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex gap-3 pt-1">
-                <button
-                  type="submit"
-                  disabled={saveMutation.isPending}
-                  className="rounded bg-accent-primary px-5 py-2 text-sm text-text-inverse hover:bg-accent-primaryHover disabled:opacity-60"
-                >
-                  {saveMutation.isPending
-                    ? "Saving..."
-                    : editingTask
-                    ? "Save Changes"
-                    : "Create Task"}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowModal(false);
-                    setEditingTask(null);
-                    reset();
-                  }}
-                  className="rounded border border-border-default bg-background-primary px-5 py-2 text-sm text-text-secondary hover:bg-surface-hover"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
+          <div>
+            <label className={LABEL}>Title *</label>
+            <input {...register("title", { required: "Title is required" })}
+              className={INPUT} placeholder="Task title" />
+            {errors.title && (
+              <p className="mt-1 text-xs text-status-error">
+                {errors.title.message}
+              </p>
+            )}
+          </div>
+          <div>
+            <label className={LABEL}>Description</label>
+            <textarea {...register("description")} rows={2} className={INPUT} placeholder="Optional description" />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className={LABEL}>Priority</label>
+              <select {...register("priority")} className={INPUT}>
+                {PRIORITIES.map(p => <option key={p}>{p}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className={LABEL}>Status</label>
+              <select {...register("status")} className={INPUT}>
+                {STATUSES.map(s => <option key={s}>{s}</option>)}
+              </select>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className={LABEL}>Start Date *</label>
+              <input
+                type="date"
+                {...register("start_date", { required: "Start date is required" })}
+                className={INPUT}
+              />
+              {errors.start_date && (
+                <p className="mt-1 text-xs text-status-error">
+                  {errors.start_date.message}
+                </p>
+              )}
+            </div>
+            <div>
+              <label className={LABEL}>Due Date *</label>
+              <input
+                type="date"
+                {...register("due_date", {
+                  required: "Due date is required",
+                  validate: (v) =>
+                    !startDate || !v || v >= startDate || "Due date must be on or after start date",
+                })}
+                className={INPUT}
+                min={startDate}
+              />
+              {errors.due_date && (
+                <p className="mt-1 text-xs text-status-error">
+                  {errors.due_date.message}
+                </p>
+              )}
+            </div>
+          </div>
+          <div>
+            <label className={LABEL}>Assignee</label>
+            <select {...register("assignee_id")} className={INPUT}>
+              <option value="">— Unassigned —</option>
+              {users?.map((u: any) => (
+                <option key={u.id} value={u.id}>{u.full_name ?? u.email}</option>
+              ))}
+            </select>
+          </div>
+          <div className="flex gap-3 pt-1">
+            <button
+              type="submit"
+              disabled={saveMutation.isPending}
+              className="rounded bg-accent-primary px-5 py-2 text-sm text-text-inverse hover:bg-accent-primaryHover disabled:opacity-60"
+            >
+              {saveMutation.isPending
+                ? "Saving..."
+                : editingTask
+                  ? "Save Changes"
+                  : "Create Task"}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setShowModal(false);
+                setEditingTask(null);
+                reset();
+              }}
+              className="rounded border border-border-default bg-background-primary px-5 py-2 text-sm text-text-secondary hover:bg-surface-hover"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
       </Modal>
     </div>
   );
