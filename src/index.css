@@ -1,0 +1,277 @@
+@import "tailwindcss";
+
+/* Tailwind v4: map utilities to runtime CSS variables (so theme toggle updates UI) */
+@theme inline {
+  /* Background & surface */
+  --color-bg-primary: var(--bg-primary);
+  --color-surface-base: var(--surface-base);
+  --color-surface-card: var(--surface-card);
+  --color-surface-elevated: var(--surface-elevated);
+  --color-surface-hover: var(--surface-hover);
+  --color-background-primary: var(--bg-primary);
+  --color-background-surface: var(--surface);
+  --color-background-card: var(--surface-card);
+  /* Text */
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-text-disabled: var(--text-disabled);
+  --color-text-inverse: var(--text-inverse);
+  /* Border & divider */
+  --color-border-subtle: var(--border-subtle);
+  --color-border-default: var(--border-default);
+  --color-surface-border: var(--border-default);
+  --color-divider: var(--divider);
+  /* Accent & brand */
+  --color-accent-primary: var(--accent-primary);
+  --color-accent-primary-hover: var(--accent-primary-hover);
+  --color-accent-primary-active: var(--accent-primary-active);
+  --color-accent-secondary: var(--accent-secondary);
+  --color-accent-secondary-hover: var(--accent-secondary-hover);
+  --color-brand-primary: var(--accent-primary);
+  --color-brand-accent: var(--accent-secondary);
+  /* Status */
+  --color-status-success: var(--status-success);
+  --color-status-warning: var(--status-warning);
+  --color-status-error: var(--status-error);
+  --color-status-danger: var(--status-error);
+  --color-status-info: var(--accent-secondary);
+}
+
+/* Light theme defaults (office / presentation) */
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  /* Core theme tokens (spec-aligned) */
+  --bg: #f6f8fc;
+  --surface: #ffffff;
+  --cards: #eef1f6;
+  --text-primary: #0f1419;
+  --text-secondary: #64748b;
+  --border: #e2e8f0;
+  --input-bg: #ffffff;
+  --disabled: #cbd5e1;
+
+  /* Shared accent colors */
+  --primary: #ffb020;
+  --secondary: #5b7cff;
+  --success: #2ed3a7;
+  --warning: #ff7a1a;
+  --alert: #ff3b3b;
+
+  /* Map to existing design tokens used by Tailwind utilities */
+  --bg-primary: var(--bg);
+  --surface-base: var(--surface);
+  --surface-card: var(--cards);
+  --surface-hover: color-mix(in srgb, var(--cards) 92%, #000000 8%);
+  --surface-elevated: var(--surface);
+
+  --accent-primary: var(--primary);
+  --accent-primary-hover: #e6aa2f;
+  --accent-primary-active: #cc931e;
+  --accent-secondary: var(--secondary);
+  --accent-secondary-hover: color-mix(in srgb, var(--secondary) 88%, #000000 12%);
+
+  --status-success: #2fbf71;
+  --status-success-dark: #23945a;
+  --status-warning: #f5a524;
+  --status-warning-dark: #d4881c;
+  --status-error: #e5484d;
+  --status-error-dark: #c7363a;
+
+  --border-subtle: #e2e8f0;
+  --border-default: #cbd5e1;
+  --divider: #e2e8f0;
+
+  --text-muted: #9aa3b2;
+  --text-disabled: #94a3b8;
+  --text-inverse: #ffffff;
+
+  color-scheme: light;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Dark theme (default for construction site use) */
+[data-theme="dark"] {
+  --bg: #0a0d12;
+  --surface: #141922;
+  --cards: #1d2330;
+  --text-primary: #ffffff;
+  --text-secondary: #a0aec0;
+  --border: #2d3748;
+  --input-bg: #1d2330;
+  --disabled: #4a5568;
+
+  --bg-primary: var(--bg);
+  --surface-base: var(--surface);
+  --surface-card: var(--cards);
+  --surface-hover: color-mix(in srgb, var(--cards) 90%, #ffffff 10%);
+  --surface-elevated: var(--surface);
+
+  --border-subtle: #2e3443;
+  --border-default: #3a4152;
+  --divider: #343b4a;
+
+  --text-muted: #9aa3b2;
+  --text-disabled: #6e7685;
+  --text-inverse: #ffffff;
+
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  font-family: "Inter", system-ui, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+a {
+  font-weight: 500;
+  color: var(--accent-secondary);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--accent-secondary-hover);
+}
+
+button {
+  font-family: inherit;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    #1b1f27 20%,
+    #232937 50%,
+    #1b1f27 80%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeSlideUp {
+  animation: fadeSlideUp 150ms ease-out;
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20%,
+  60% {
+    transform: translateX(-6px);
+  }
+  40%,
+  80% {
+    transform: translateX(6px);
+  }
+}
+
+.animate-shake {
+  animation: shake 400ms ease-in-out;
+}
+
+/* Date inputs: keep high contrast for pickers while fitting dark UI */
+input[type="date"] {
+  color: #0f1115;
+  background-color: #ffffff;
+  color-scheme: light;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0);
+  cursor: pointer;
+  opacity: 1;
+}
+
+/* Select/dropdown: theme-aware so dark theme has dark bg + light text, list visible */
+select {
+  background-color: var(--input-bg);
+  color: var(--text-primary);
+  border-color: var(--border);
+}
+select:focus {
+  outline: none;
+  border-color: var(--secondary);
+  box-shadow: 0 0 0 2px var(--secondary);
+}
+select option {
+  background-color: var(--surface);
+  color: var(--text-primary);
+}
+[data-theme="dark"] select {
+  color-scheme: dark;
+}
+[data-theme="dark"] select option {
+  background-color: var(--surface);
+  color: var(--text-primary);
+}
+
+/* Shared form input style (reports, etc.) */
+.input-base {
+  min-height: 2.5rem;
+  width: 100%;
+  border-radius: 0.375rem;
+  border: 1px solid var(--border-default);
+  background-color: var(--input-bg);
+  color: var(--text-primary);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+}
+.input-base:focus {
+  outline: none;
+  border-color: var(--secondary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--secondary) 30%, transparent);
+}
+.input-base::placeholder {
+  color: var(--text-muted);
+}
+
+/* PWA: 48px minimum touch targets (mobile-first) */
+@media (pointer: coarse) {
+  .touch-target {
+    min-height: 48px;
+    min-width: 48px;
+  }
+}
+
