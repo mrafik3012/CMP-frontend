@@ -41,6 +41,7 @@ export function Navbar() {
 
   const [notifOpen, setNotifOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [notifLoading, setNotifLoading] = useState(false);
 
@@ -62,6 +63,17 @@ export function Navbar() {
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
+
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileMenuOpen]);
 
   const fetchNotifications = async () => {
     try {
@@ -329,12 +341,74 @@ export function Navbar() {
 
           <button
             type="button"
+            aria-label="Open menu"
             className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-border-default text-text-secondary hover:bg-surface-hover hover:text-text-primary md:hidden"
+            onClick={() => setMobileMenuOpen(true)}
           >
             <IconMenu className="h-4 w-4" />
           </button>
         </div>
       </div>
+
+      {/* Mobile menu overlay + drawer */}
+      {mobileMenuOpen && (
+        <>
+          <div
+            role="button"
+            tabIndex={0}
+            aria-label="Close menu"
+            className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm md:hidden"
+            onClick={() => setMobileMenuOpen(false)}
+            onKeyDown={(e) => e.key === "Escape" && setMobileMenuOpen(false)}
+          />
+          <div
+            className="fixed inset-y-0 right-0 z-[70] w-72 max-w-[85vw] border-l border-border-default bg-surface-card shadow-xl md:hidden"
+            aria-modal="true"
+            aria-label="Navigation menu"
+          >
+            <div className="flex flex-col gap-1 p-4 pt-16">
+              <NavLink
+                to="/dashboard"
+                className={({ isActive }) =>
+                  `rounded-lg px-4 py-3 text-sm font-medium ${isActive || dashboardMatch ? "bg-surface-hover text-text-primary" : "text-text-secondary hover:bg-surface-hover hover:text-text-primary"}`
+                }
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Dashboard
+              </NavLink>
+              <NavLink
+                to="/projects"
+                className={({ isActive }) =>
+                  `rounded-lg px-4 py-3 text-sm font-medium ${isActive || projectsMatch ? "bg-surface-hover text-text-primary" : "text-text-secondary hover:bg-surface-hover hover:text-text-primary"}`
+                }
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Projects
+              </NavLink>
+              {role === "Admin" && (
+                <NavLink
+                  to="/users"
+                  className={({ isActive }) =>
+                    `rounded-lg px-4 py-3 text-sm font-medium ${isActive || usersMatch ? "bg-surface-hover text-text-primary" : "text-text-secondary hover:bg-surface-hover hover:text-text-primary"}`
+                  }
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Users
+                </NavLink>
+              )}
+              <NavLink
+                to="/reports"
+                className={({ isActive }) =>
+                  `rounded-lg px-4 py-3 text-sm font-medium ${isActive || reportsMatch ? "bg-surface-hover text-text-primary" : "text-text-secondary hover:bg-surface-hover hover:text-text-primary"}`
+                }
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Reports
+              </NavLink>
+            </div>
+          </div>
+        </>
+      )}
     </header>
   );
 }
